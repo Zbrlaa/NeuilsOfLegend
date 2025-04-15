@@ -54,18 +54,29 @@ async def get_clash_player_by_puuid(puuid: str):
         response = await client.get(url, headers=headers)
         response.raise_for_status()
         return response.json()
+    
+async def get_challenges_by_puuid(puuid: str):
+    async with httpx.AsyncClient() as client:
+        url = f"{BASE_URL_1}/lol/challenges/v1/player-data/{puuid}"
+        response = await client.get(url, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    
+
 
 	
-puuid = asyncio.run(get_account_by_name("Zbrlaa", "669"))["puuid"]
+puuid = asyncio.run(get_account_by_name("Narcolepsy gang", "2801S"))["puuid"]
 print(puuid)
 summoner = asyncio.run(get_summoner_by_puuid(puuid))
 league = asyncio.run(get_league_by_puuid(puuid))
 top_mastery = asyncio.run(get_top_champion_masteries_by_puuid(puuid))
 tournaments = asyncio.run(get_clash_tournaments())
+challenges = asyncio.run(get_challenges_by_puuid(puuid))
 
-print(summoner)
-print(league[0])
-for mastery in top_mastery :
-	print(mastery)
+# print(summoner)
+# print(league[0])
+# for mastery in top_mastery :
+# 	print(mastery)
 for tournament in tournaments :
 	print(tournament)
+# print(challenges)	
