@@ -12,9 +12,9 @@ headers = {
 	"X-Riot-Token": RIOT_API_KEY
 }
 
-async def get_account_by_name(gameName: str, tagLine: str):
+async def get_account_by_name(game_name: str, tag_line: str):
 	async with httpx.AsyncClient() as client:
-		url = f"{BASE_URL_2}/riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}"
+		url = f"{BASE_URL_2}/riot/account/v1/accounts/by-riot-id/{game_name}/{tag_line}"
 		response = await client.get(url, headers=headers)
 		response.raise_for_status()
 		return response.json()
@@ -34,36 +34,34 @@ async def get_league_by_puuid(puuid: str):
 		return response.json()
 
 async def get_top_champion_masteries_by_puuid(puuid: str, count: int = 10):
-    async with httpx.AsyncClient() as client:
-        url = f"{BASE_URL_1}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}/top"
-        params = {"count": count}
-        response = await client.get(url, headers=headers, params=params)
-        response.raise_for_status()
-        return response.json()
+	async with httpx.AsyncClient() as client:
+		url = f"{BASE_URL_1}/lol/champion-mastery/v4/champion-masteries/by-puuid/{puuid}/top"
+		params = {"count": count}
+		response = await client.get(url, headers=headers, params=params)
+		response.raise_for_status()
+		return response.json()
 
 async def get_clash_tournaments():
-    async with httpx.AsyncClient() as client:
-        url = f"{BASE_URL_1}/lol/clash/v1/tournaments"
-        response = await client.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json()
+	async with httpx.AsyncClient() as client:
+		url = f"{BASE_URL_1}/lol/clash/v1/tournaments"
+		response = await client.get(url, headers=headers)
+		response.raise_for_status()
+		return response.json()
 
 async def get_clash_player_by_puuid(puuid: str):
-    async with httpx.AsyncClient() as client:
-        url = f"{BASE_URL_1}/lol/clash/v1/players/by-puuid/{puuid}"
-        response = await client.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json()
-    
+	async with httpx.AsyncClient() as client:
+		url = f"{BASE_URL_1}/lol/clash/v1/players/by-puuid/{puuid}"
+		response = await client.get(url, headers=headers)
+		response.raise_for_status()
+		return response.json()
+	
 async def get_challenges_by_puuid(puuid: str):
-    async with httpx.AsyncClient() as client:
-        url = f"{BASE_URL_1}/lol/challenges/v1/player-data/{puuid}"
-        response = await client.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json()
-    
-
-
+	async with httpx.AsyncClient() as client:
+		url = f"{BASE_URL_1}/lol/challenges/v1/player-data/{puuid}"
+		response = await client.get(url, headers=headers)
+		response.raise_for_status()
+		return response.json()
+	
 	
 puuid = asyncio.run(get_account_by_name("Narcolepsy gang", "2801S"))["puuid"]
 print(puuid)
@@ -79,4 +77,4 @@ challenges = asyncio.run(get_challenges_by_puuid(puuid))
 # 	print(mastery)
 for tournament in tournaments :
 	print(tournament)
-# print(challenges)	
+# print(challenges)
