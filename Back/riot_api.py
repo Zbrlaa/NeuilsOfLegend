@@ -4,7 +4,6 @@ import httpx
 import asyncio
 import json
 from datetime import datetime
-from typing import List, Dict, Any
 
 load_dotenv()
 RIOT_API_KEY = os.getenv("RIOT_API_KEY")
@@ -28,61 +27,40 @@ async def get_latest_version() -> str:
 		versions = resp.json()
 		return versions[0]
 
-def format_champion(champion: dict) -> dict:
-	return {
-		"id": champion["key"],
-		"name": champion["name"],
-		"title": champion["title"],
-		"blurb": champion["blurb"]
-	}
-
 VERSION = asyncio.run(get_latest_version())
 QUEUES = {q["queueId"]: q for q in read_json("data/queues.json")}
 
-async def get_champions(version: str) -> str:
+async def update_champion_json(version: str):
 	url = f"{BASE_DDRAGON}/cdn/{version}/data/fr_FR/champion.json"
 	async with httpx.AsyncClient() as client:
 		resp = await client.get(url)
 		resp.raise_for_status()
-	return resp.json()
+		champions =  resp.json()
+		champions_formated = {c["key"]: format_champion(c) for c in champions["data"].values()}
+		with open("data/champions.json", "w", encoding="utf-8") as f:
+			json.dump(champions_formated, f, indent=4, ensure_ascii=False)
 
-async def update_champion_json():
-	champions = await get_champions(version=VERSION)
-	champions_formated = {c["key"]: format_champion(c) for c in champions["data"].values()}
-	with open("data/champions.json", "w", encoding="utf-8") as f:
-		json.dump(champions_formated, f, indent=4, ensure_ascii=False)
+async def update_maps_json():
+	maps = read_json("data/maps.json")	
+	maps_formated = {m["mapId"]: m for m in maps}
 
-asyncio.run(update_champion_json())
+	with open("data/maps.json", "w", encoding="utf-8") as f:
+		json.dump(maps_formated, f, indent=4, ensure_ascii=False)
+
+# asyncio.run(update_maps_json())
+
+async def update_queues_json():
+	queues = read_json("data/queues.json")	
+	queues_formated = {q["queueId"]: q for q in queues}
+
+	with open("data/queues.json", "w", encoding="utf-8") as f:
+		json.dump(queues_formated, f, indent=4, ensure_ascii=False)
+
+# asyncio.run(update_queues_json())
+
+# asyncio.run(update_champion_json(VERSION))
 CHAMPION = read_json("data/champions.json")
 print(CHAMPION)
-
-def format_timestamp(ms: int) -> str:
-	dt = datetime.fromtimestamp(ms / 1000)
-	return dt.strftime("%Y-%m-%d %H:%M:%S")
-
-def format_clash_tournament(tournament: dict) -> dict:
-	return {
-		"id": tournament["id"],
-		"theme": tournament.get("nameKey", ""),
-		"day": tournament.get("nameKeySecondary", ""),
-		"schedule": [
-			{
-				"id": s["id"],
-				"registrationTime": format_timestamp(s["registrationTime"]),
-				"startTime": format_timestamp(s["startTime"]),
-				"cancelled": s["cancelled"]
-			} for s in tournament.get("schedule", [])
-		]
-	}
-
-def format_mastery(mastery: dict) -> dict:
-	return {
-		"champion": mastery["championId"],
-		"level": mastery["championLevel"],
-		"points": mastery["championPoints"],
-		"lastPlayed": format_timestamp(mastery["lastPlayTime"])
-	}
-
 
 async def get_account_by_name(game_name: str, tag_line: str):
 	async with httpx.AsyncClient() as client:
@@ -130,7 +108,7 @@ async def get_clash_player_by_puuid(puuid: str):
 		response = await client.get(url, headers=headers)
 		response.raise_for_status()
 		return response.json()
-	
+
 async def get_challenges_by_puuid(puuid: str):
 	async with httpx.AsyncClient() as client:
 		url = f"{BASE_URL_1}/lol/challenges/v1/player-data/{puuid}"
@@ -157,7 +135,7 @@ async def get_match_detail(match_id: str):
 		response = await client.get(url, headers=headers)
 		response.raise_for_status()
 		return response.json()
-	
+
 
 print(VERSION)
 print(QUEUES.get(450, {}).get("description", "Inconnue"))
