@@ -1,12 +1,11 @@
 # riot_api/config.py
-import os
-from dotenv import load_dotenv
+import asyncio
+from .assets import read_json
+from .utils import get_latest_version
 
-load_dotenv()
 
-RIOT_API_KEY = os.getenv("RIOT_API_KEY")
-HEADERS = {"X-Riot-Token": RIOT_API_KEY}
+VERSION = asyncio.run(get_latest_version())
 
-BASE_URL_1 = "https://euw1.api.riotgames.com"
-BASE_URL_2 = "https://europe.api.riotgames.com"
-BASE_DDRAGON = "https://ddragon.leagueoflegends.com"
+CHAMPIONS = read_json("data/champions.json")
+MAPS = read_json("data/maps.json")
+QUEUE = read_json("data/queues.json")
