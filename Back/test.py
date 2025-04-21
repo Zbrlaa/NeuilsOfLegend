@@ -11,6 +11,7 @@ top_mastery = asyncio.run(get_top_champion_masteries_by_puuid(puuid))
 tournaments = asyncio.run(get_clash_tournaments())
 challenges = asyncio.run(get_challenges_by_puuid(puuid))
 matchs = asyncio.run(get_matchs_by_queue(puuid))
+mastery_score = asyncio.run(get_mastery_score(puuid))
 
 print(puuid)
 print(account)
@@ -22,8 +23,7 @@ for tournament in tournaments :
 	print(tournament)
 # print(challenges)
 print(matchs)
-# for match in matchs[:1] :
-# 	m = asyncio.run(get_match_detail(match))
-# 	participant = next(p for p in m["info"]["participants"] if p["puuid"] == puuid) #Info du joueur ciblé
-# 	print(participant)
-#Durée (gameStartTimestamp-gameEndTimestamp)/60000
+for match in matchs[:1] :
+	m = asyncio.run(get_match_detail(match))
+	print(m)
+print(mastery_score)
