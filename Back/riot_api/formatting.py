@@ -83,3 +83,10 @@ def format_match(match: dict) -> dict:
 			for p in info.get("participants", [])
 		}
 	}
+
+# def format_match_timeline(match_timeline: dict) -> dict :
+# 	info = match_timeline["info"]
+# 	frames = info["frames"]
+# 	return {
+		
+# 	}
